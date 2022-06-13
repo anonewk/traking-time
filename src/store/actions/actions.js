@@ -8,3 +8,9 @@ export const HIDE_ERROR = 'HIDE_ERROR';
 export const SIGN_IN = 'SIGN_IN';
 export const SIGN_UP = 'SIGN_UP';
 export const LOGOUT = 'LOGOUT';
+
+/*          AUTH        */
+export const CREATE_TASK = 'CREATE_TASK';
+export const READ_TASK = 'READ_TASK';
+export const UPDATE_TASK = 'UPDATE_TASK';
+export const DELETE_TASK = 'DELETE_TASK';
