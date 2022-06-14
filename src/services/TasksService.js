@@ -1,18 +1,30 @@
-import {SignUpAction, SignInAction} from "../store/actions/auth.action";
+import {CreateTaskAction, DeleteTaskAction, UpdateTaskAction} from "../store/actions/tasks.action";
 
-export const SignIn =  (data) => {
-    if(data.authReducer.user.email === data.formik.getFieldProps('email').value &&
-        data.authReducer.user.password === data.formik.getFieldProps('password').value
-    ){
-         data.dispatch
-        (SignInAction({email: data.formik.getFieldProps('email').value, password: data.formik.getFieldProps('password').value}))
-        data.navigate('/dashboard/app', { replace: true });
-        return true;
-    }
-    return false;
-}
-export const SignUp = (data) => {
+export const CreateTask =  (data) => {
     data.dispatch
-    (SignUpAction({email: data.formik.getFieldProps('email').value, password: data.formik.getFieldProps('password').value}))
-    data.navigate('/dashboard/app', { replace: true });
+    (CreateTaskAction({
+        id: data.formik.getFieldProps('id').value,
+        task: data.formik.getFieldProps('task').value,
+        timeSpent: data.formik.getFieldProps('timeSpent').value,
+        status: data.status,
+        createdAt: data.formik.getFieldProps('createdAt').value,
+        updatedAt: data.formik.getFieldProps('updatedAt').value,
+    }))
+    return true;
+}
+export const UpdateTask =  (data) => {
+    return data.dispatch
+    (UpdateTaskAction({
+        id: data.taskEditSelected.id,
+        task: data.formik.getFieldProps('task').value ?? data.taskEditSelected.task,
+        timeSpent: data.formik.getFieldProps('timeSpent').value ?? data.taskEditSelected.timeSpent,
+        createdAt:  data.taskEditSelected.createdAt,
+        status: data.status ?? data.taskEditSelected.status,
+        updatedAt: new Date(),
+    }))
+}
+
+export const DeleteTask = (data) => {
+    return  data.dispatch
+    (DeleteTaskAction(data.id));
 }

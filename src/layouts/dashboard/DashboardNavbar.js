@@ -7,7 +7,6 @@ import Iconify from '../../components/Iconify';
 //
 import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
-import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
 
 // ----------------------------------------------------------------------
@@ -40,7 +39,7 @@ DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func,
 };
 
-export default function DashboardNavbar({ onOpenSidebar }) {
+export default function DashboardNavbar({ onOpenSidebar, user }) {
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -52,9 +51,8 @@ export default function DashboardNavbar({ onOpenSidebar }) {
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-          <LanguagePopover />
           <NotificationsPopover />
-          <AccountPopover />
+          <AccountPopover user={user}/>
         </Stack>
       </ToolbarStyle>
     </RootStyle>

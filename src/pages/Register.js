@@ -9,7 +9,6 @@ import Page from '../components/Page';
 import Logo from '../components/Logo';
 // sections
 import { RegisterForm } from '../sections/auth/register';
-import AuthSocial from '../sections/auth/AuthSocial';
 
 // ----------------------------------------------------------------------
 
@@ -68,9 +67,9 @@ export default function Register() {
           <Logo />
           {smUp && (
             <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-              Already have an account? {''}
+              Déjà inscrit? {''}
               <Link variant="subtitle2" component={RouterLink} to="/login">
-                Login
+                Connectez-vous
               </Link>
             </Typography>
           )}
@@ -79,7 +78,7 @@ export default function Register() {
         {mdUp && (
           <SectionStyle>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Manage the job more effectively with Minimal
+              Gérez votre temps efficacement
             </Typography>
             <img alt="register" src="/static/illustrations/illustration_register.png" />
           </SectionStyle>
@@ -88,32 +87,30 @@ export default function Register() {
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Get started absolutely free.
+             Inscrivez-vous.
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Free forever. No credit card needed.</Typography>
-
-            <AuthSocial />
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Plateforme gratuite</Typography>
 
             <RegisterForm />
 
             <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
-              By registering, I agree to Minimal&nbsp;
+              En m'inscrivant, j'accepte les conditions de Traking time&nbsp;
               <Link underline="always" color="text.primary" href="#">
-                Terms of Service
+                Conditions d'utilisation
               </Link>
-              {''}and{''}
+              {''}et{''}
               <Link underline="always" color="text.primary" href="#">
-                Privacy Policy
+                Politique de confidentialité
               </Link>
               .
             </Typography>
 
             {!smUp && (
               <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
-                Already have an account?{' '}
+                Déjà inscrit?{' '}
                 <Link variant="subtitle2" to="/login" component={RouterLink}>
-                  Login
+                  Connectez-vous
                 </Link>
               </Typography>
             )}

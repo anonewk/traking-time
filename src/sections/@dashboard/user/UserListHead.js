@@ -34,6 +34,7 @@ export default function UserListHead({
   numSelected,
   onRequestSort,
   onSelectAllClick,
+
 }) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);

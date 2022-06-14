@@ -3,33 +3,34 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
-import Blog from './pages/Blog';
-import User from './pages/User';
+import Calendar from './pages/Calendar';
 import Login from './pages/Login';
 import NotFound from './pages/Page404';
 import Register from './pages/Register';
 import Products from './pages/Products';
 import DashboardApp from './pages/DashboardApp';
+import Tasks from "./pages/Tasks";
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router(props) {
   return useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: <DashboardLayout user={props.authReducer}/>,
       children: [
         { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
+        { path: 'tasks', element: <Tasks applicationReducer={props.applicationReducer}/> },
         { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> },
+        { path: 'blog', element: <Calendar /> },
       ],
     },
     {
       path: '/',
       element: <LogoOnlyLayout />,
       children: [
-        { path: '/', element: <Navigate to="/dashboard/app" /> },
+        { path: '/', element: <Navigate  to={props.authReducer.isLoggedIn !== true ? '/login' : '/dashboard/app'} /> },
+        { path: '/login', element: <Navigate  to={props.authReducer.isLoggedIn !== true ? '/login' : '/dashboard/app'} /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },

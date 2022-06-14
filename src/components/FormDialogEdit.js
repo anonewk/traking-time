@@ -14,55 +14,57 @@ import {
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from "yup";
 import {LoadingButton} from "@mui/lab";
-import { faker } from '@faker-js/faker';
 import {hideLoader, showError, showLoader} from "../store/actions/application.action";
-import {CREATE_TASK_SUCCESS, ERROR} from "../constants/Constants";
-import {CreateTask} from "../services/TasksService";
+import {UPDATE_TASK_SUCCESS, ERROR} from "../constants/Constants";
+import {UpdateTask} from "../services/TasksService";
 
 
 
-const FormDialog = (props) => {
+const FormDialogEdit = (props) => {
+    const [initialValues, setInitialValues] = React.useState({
+        id: props.taskEditSelected.id,
+        task:  props.taskEditSelected.task,
+        timeSpent: props.taskEditSelected.timeSpent,
+        createdAt: props.taskEditSelected.createdAt,
+        updatedAt: props.taskEditSelected.updatedAt,
+        status: props.taskEditSelected.status,
+    });
     const [status, setStatus] = React.useState('');
+
     const handleChange = (event) => {
         setStatus(event.target.value);
     };
 
-    const TaskSchema = Yup.object().shape({
-        task: Yup.string().required('Champs requis'),
-    });
-
     const formik = useFormik({
-        initialValues: {
-            id: faker.datatype.uuid(),
-            task: '',
-            timeSpent: '',
-            createdAt: new Date(),
-            updatedAt: '',
-            status: '',
-        },
-        validationSchema: TaskSchema,
-        onSubmit:  () => {
+        initialValues,
+        onSubmit:   () => {
+            console.log(formik.getFieldProps('task').value)
             props.dispatch(showLoader())
-            const newTask = CreateTask({formik, dispatch: props.dispatch, status});
+            const updateTask = UpdateTask({
+                formik,
+                dispatch: props.dispatch,
+                status,
+                taskEditSelected: props.taskEditSelected
+            });
             props.dispatch(hideLoader())
-            props.handleClose()
-            return !newTask ? props.dispatch(showError(ERROR)) : props.dispatch(showError(CREATE_TASK_SUCCESS))
+            props.handleCloseEdit()
+            return !updateTask ? props.dispatch(showError(ERROR)) : props.dispatch(showError(UPDATE_TASK_SUCCESS))
         },
     });
     const { errors, touched, handleSubmit, getFieldProps } = formik;
-
     return (
         <div>
-            <Dialog open={props.open} onClose={props.handleClose}>
-                <DialogTitle>Task</DialogTitle>
+            <Dialog open={props.openEdit} onClose={props.handleCloseEdit}>
+                <DialogTitle>Edit task</DialogTitle>
                 <FormikProvider value={formik}>
                     <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                <DialogContent>
+                        <DialogContent>
                             <Stack spacing={3}>
                                 <TextField
                                     fullWidth
-                                    type="task"
+                                    type="text"
                                     label="Tâche"
+                                    defaultValue={props.taskEditSelected.task}
                                     {...getFieldProps('task')}
                                     error={Boolean(touched.task && errors.task)}
                                     helperText={touched.task && errors.task}
@@ -71,6 +73,7 @@ const FormDialog = (props) => {
                                     fullWidth
                                     autoComplete="time-spend"
                                     type={'time'}
+                                    defaultValue={props.taskEditSelected.timeSpent}
                                     label="Temps passé en H"
                                     {...getFieldProps('timeSpent')}
                                     error={Boolean(touched.timeSpent && errors.timeSpent)}
@@ -82,6 +85,7 @@ const FormDialog = (props) => {
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={status}
+                                        defaultValue={props.taskEditSelected.status}
                                         label="Status"
                                         onChange={handleChange}
                                     >
@@ -91,18 +95,18 @@ const FormDialog = (props) => {
                                     </Select>
                                 </FormControl>
                             </Stack>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={props.handleClose}>Annuler</Button>
-                    <LoadingButton  size="large" type="submit" variant="contained" loading={props.applicationReducer.loading}>
-                        Ajouter
-                    </LoadingButton>
-                </DialogActions>
-            </Form>
-        </FormikProvider>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={props.handleCloseEdit}>Annuler</Button>
+                            <LoadingButton  size="large" type="submit" variant="contained" loading={props.applicationReducer.loading}>
+                                Modifier
+                            </LoadingButton>
+                        </DialogActions>
+                    </Form>
+                </FormikProvider>
 
-</Dialog>
-</div>
-);
+            </Dialog>
+        </div>
+    );
 }
-export default FormDialog;
+export default FormDialogEdit;

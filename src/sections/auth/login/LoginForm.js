@@ -6,18 +6,26 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // component
+import {useDispatch, useSelector} from "react-redux";
 import Iconify from '../../../components/Iconify';
+import {SignIn} from "../../../services/AuthService";
+import {hideLoader, showError, showLoader} from "../../../store/actions/application.action";
+import {BAD_COMBINATION} from "../../../constants/Constants";
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const authReducer = useSelector(state => state.authReducer);
+  const applicationReducer = useSelector(state => state.applicationReducer);
 
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    email: Yup.string().email('Veuillez entrer un email valide.').required('Email requis'),
+    password: Yup.string().required('Password requis'),
   });
 
   const formik = useFormik({
@@ -27,12 +35,17 @@ export default function LoginForm() {
       remember: true,
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit:  () => {
+      dispatch(showLoader())
+      const signIn = SignIn({formik, navigate, dispatch, authReducer});
+      if(!signIn){
+        dispatch(showError(BAD_COMBINATION))
+      }
+      dispatch(hideLoader())
     },
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, handleSubmit, getFieldProps } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -46,7 +59,7 @@ export default function LoginForm() {
             fullWidth
             autoComplete="username"
             type="email"
-            label="Email address"
+            label="Adresse email"
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}
@@ -56,7 +69,7 @@ export default function LoginForm() {
             fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
-            label="Password"
+            label="Mot de passe"
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -75,16 +88,16 @@ export default function LoginForm() {
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
           <FormControlLabel
             control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
+            label="Se souvenir de moi"
           />
 
           <Link component={RouterLink} variant="subtitle2" to="#" underline="hover">
-            Forgot password?
+            Mot de passe oublié?
           </Link>
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Login
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={applicationReducer.loading}>
+          Connexion
         </LoadingButton>
       </Form>
     </FormikProvider>

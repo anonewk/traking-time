@@ -4,13 +4,13 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 // component
 import Iconify from '../../../components/Iconify';
+import {DeleteTask} from "../../../services/TasksService";
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+const UserMoreMenu = props => {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -27,14 +27,20 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem sx={{ color: 'text.secondary' }} onClick={ () =>
+            DeleteTask(
+                {
+                    id: props.task.id,
+                    dispatch: props.dispatch
+                }
+            )}>
           <ListItemIcon>
             <Iconify icon="eva:trash-2-outline" width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }} onClick={() => props.handleSendDataModal(props.task)}>
           <ListItemIcon>
             <Iconify icon="eva:edit-fill" width={24} height={24} />
           </ListItemIcon>
@@ -44,3 +50,4 @@ export default function UserMoreMenu() {
     </>
   );
 }
+export default UserMoreMenu;
