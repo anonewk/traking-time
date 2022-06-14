@@ -21,7 +21,7 @@ export default function Router(props) {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'tasks', element: <Tasks applicationReducer={props.applicationReducer}/> },
-        { path: 'products', element: <Products /> },
+        { path: 'products', element: <Products applicationReducer={props.applicationReducer}/> },
         { path: 'blog', element: <Calendar /> },
       ],
     },

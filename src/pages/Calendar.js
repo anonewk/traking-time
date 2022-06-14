@@ -6,6 +6,7 @@ import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 import Scheduler from "react-mui-scheduler"
 // components
 import Page from '../components/Page';
+import Iconify from "../components/Iconify";
 // ----------------------------------------------------------------------
 export default function Calendar() {
     const [state, setState] = useState({
@@ -107,6 +108,9 @@ export default function Calendar() {
             <Typography variant="h4" gutterBottom>
               Calendar
             </Typography>
+              <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
+                  New event
+              </Button>
           </Stack>
             <Scheduler
                 locale="fr"
