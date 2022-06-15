@@ -20,7 +20,7 @@ export default function App() {
         if(applicationReducer.error){
             setTimeout(() => dispatch(hideError()), 3000)
         }
-    }, [applicationReducer.error])
+    }, [applicationReducer.error, dispatch])
     return (
     <ThemeProvider>
 

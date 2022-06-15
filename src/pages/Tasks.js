@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 // components
 import {useDispatch, useSelector} from "react-redux";
-import moment, {locale} from "moment";
+import moment from "moment";
 import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
@@ -328,7 +328,6 @@ export default function Tasks(props) {
             open={open}
             setOpen={setOpen}
             handleClose={handleClose}
-            handleClickOpen={handleClickOpen}
             dispatch={dispatch}
             applicationReducer={props.applicationReducer}
             taskEditSelected={taskEditSelected}

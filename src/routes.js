@@ -22,7 +22,7 @@ export default function Router(props) {
         { path: 'app', element: <DashboardApp /> },
         { path: 'tasks', element: <Tasks applicationReducer={props.applicationReducer}/> },
         { path: 'products', element: <Products applicationReducer={props.applicationReducer}/> },
-        { path: 'blog', element: <Calendar /> },
+        { path: 'blog', element: <Calendar applicationReducer={props.applicationReducer} authReducer={props.authReducer}/> },
       ],
     },
     {

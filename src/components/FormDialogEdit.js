@@ -12,7 +12,6 @@ import {
     Select, MenuItem,
 } from "@mui/material";
 import { useFormik, Form, FormikProvider } from 'formik';
-import * as Yup from "yup";
 import {LoadingButton} from "@mui/lab";
 import {hideLoader, showError, showLoader} from "../store/actions/application.action";
 import {UPDATE_TASK_SUCCESS, ERROR} from "../constants/Constants";
@@ -21,14 +20,6 @@ import {UpdateTask} from "../services/TasksService";
 
 
 const FormDialogEdit = (props) => {
-    const [initialValues, setInitialValues] = React.useState({
-        id: props.taskEditSelected.id,
-        task:  props.taskEditSelected.task,
-        timeSpent: props.taskEditSelected.timeSpent,
-        createdAt: props.taskEditSelected.createdAt,
-        updatedAt: props.taskEditSelected.updatedAt,
-        status: props.taskEditSelected.status,
-    });
     const [status, setStatus] = React.useState('');
 
     const handleChange = (event) => {
@@ -36,7 +27,14 @@ const FormDialogEdit = (props) => {
     };
 
     const formik = useFormik({
-        initialValues,
+        initialValues: {
+            id: props.taskEditSelected.id,
+            task:  props.taskEditSelected.task,
+            timeSpent: props.taskEditSelected.timeSpent,
+            createdAt: props.taskEditSelected.createdAt,
+            updatedAt: props.taskEditSelected.updatedAt,
+            status: props.taskEditSelected.status,
+        },
         onSubmit:   () => {
             console.log(formik.getFieldProps('task').value)
             props.dispatch(showLoader())
@@ -73,6 +71,7 @@ const FormDialogEdit = (props) => {
                                     fullWidth
                                     autoComplete="time-spend"
                                     type={'time'}
+                                    InputLabelProps={{ shrink: true }}
                                     defaultValue={props.taskEditSelected.timeSpent}
                                     label="Temps passé en H"
                                     {...getFieldProps('timeSpent')}

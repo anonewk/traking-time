@@ -9,7 +9,6 @@ import Page from '../components/Page';
 import Logo from '../components/Logo';
 // sections
 import { RegisterForm } from '../sections/auth/register';
-
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({

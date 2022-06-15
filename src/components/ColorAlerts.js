@@ -2,17 +2,11 @@ import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import {Button} from "@mui/material";
-import {hideLoader} from "../store/actions/application.action";
 
 const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 
 export default function ColorAlerts(props) {
     const [open, setOpen] = React.useState(props.error);
-
-    const handleClick = () => {
-        setOpen(props.error);
-    };
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {

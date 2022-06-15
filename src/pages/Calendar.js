@@ -1,14 +1,20 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Button, Container, Stack, Typography } from '@mui/material';
 
 import Scheduler from "react-mui-scheduler"
 // components
+import {useDispatch, useSelector} from "react-redux";
 import Page from '../components/Page';
 import Iconify from "../components/Iconify";
+import FormDialogCalendar from "../components/FormDialogCalendar";
 // ----------------------------------------------------------------------
-export default function Calendar() {
+export default function Calendar(props) {
+    const dispatch = useDispatch()
+    const eventsReducer = useSelector(state => state.eventsReducer);
+
+
     const [state, setState] = useState({
         options: {
             transitionMode: "zoom", // or fade
@@ -34,7 +40,12 @@ export default function Calendar() {
             showDatePicker: true
         }
     })
-
+    const [open, setOpen] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
+    const [eventEditSelected, setEventEditSelected] = useState({});
+    useEffect(() => {
+        setEventEditSelected(eventEditSelected)
+    }, [eventEditSelected])
     const events = [
         {
             id: "event-1",
@@ -86,6 +97,24 @@ export default function Calendar() {
         }
     ]
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    const handleClickOpenEdit = () => {
+        setOpenEdit(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+        /* setTaskEditSelected({}) */
+    };
+    const handleSendDataModal = (data) => {
+        setEventEditSelected(data)
+        handleClickOpenEdit()
+    };
     const handleCellClick = (event, row, day) => {
         // Do something...
     }
@@ -102,29 +131,37 @@ export default function Calendar() {
         // Do something...
     }
     return (
-      <Page title="Dashboard: Calendar">
-        <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4" gutterBottom>
-              Calendar
-            </Typography>
-              <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
-                  New event
-              </Button>
-          </Stack>
-            <Scheduler
-                locale="fr"
-                events={events}
-                legacyStyle={false}
-                options={state?.options}
-                alertProps={state?.alertProps}
-                toolbarProps={state?.toolbarProps}
-                onEventsChange={handleEventsChange}
-                onCellClick={handleCellClick}
-                onTaskClick={handleEventClick}
-                onAlertCloseButtonClicked={handleAlertCloseButtonClicked}
+        <Page title="Dashboard: Calendar">
+            <Container>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    <Typography variant="h4" gutterBottom>
+                        Calendar
+                    </Typography>
+                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpen(!open)}>
+                        New event
+                    </Button>
+                </Stack>
+                <Scheduler
+                    locale="fr"
+                    events={eventsReducer}
+                    legacyStyle={false}
+                    options={state?.options}
+                    alertProps={state?.alertProps}
+                    toolbarProps={state?.toolbarProps}
+                    onEventsChange={handleEventsChange}
+                    onCellClick={handleCellClick}
+                    onTaskClick={handleEventClick}
+                    onAlertCloseButtonClicked={handleAlertCloseButtonClicked}
+                />
+            </Container>
+            <FormDialogCalendar
+                user={props.authReducer.user}
+                open={open}
+                setOpen={setOpen}
+                handleClose={handleClose}
+                dispatch={dispatch}
+                applicationReducer={props.applicationReducer}
             />
-        </Container>
-      </Page>
-  );
+        </Page>
+    );
 }

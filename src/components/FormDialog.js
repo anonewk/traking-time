@@ -69,6 +69,7 @@ const FormDialog = (props) => {
                                 />
                                 <TextField
                                     fullWidth
+                                    InputLabelProps={{ shrink: true }}
                                     autoComplete="time-spend"
                                     type={'time'}
                                     label="Temps passé en H"

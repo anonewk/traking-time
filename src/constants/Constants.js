@@ -15,3 +15,8 @@ export const DELETE_TASK_SUCCESS = 'Tâche supprimée';
 export const TASK_DRAFT = 'draft';
 export const TASK_ACTIVE = 'active';
 export const TASK_FINISHED = 'finished';
+
+// Event
+export const CREATE_EVENT_SUCCESS = 'Nouvelle event ajouté';
+export const UPDATE_EVENT_SUCCESS = 'Event modifié';
+export const DELETE_EVENT_SUCCESS = 'Event supprimé';

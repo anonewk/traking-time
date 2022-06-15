@@ -68,7 +68,7 @@ export default function RegisterForm() {
                     />
 
                     <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-                        S'inscire
+                        S'inscrire
                     </LoadingButton>
                 </Stack>
             </Form>
