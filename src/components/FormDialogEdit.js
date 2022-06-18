@@ -20,7 +20,7 @@ import {UpdateTask} from "../services/TasksService";
 
 
 const FormDialogEdit = (props) => {
-    const [status, setStatus] = React.useState('');
+    const [status, setStatus] = React.useState(props.taskEditSelected.status);
 
     const handleChange = (event) => {
         setStatus(event.target.value);
@@ -34,6 +34,7 @@ const FormDialogEdit = (props) => {
             createdAt: props.taskEditSelected.createdAt,
             updatedAt: props.taskEditSelected.updatedAt,
             status: props.taskEditSelected.status,
+            note: props.taskEditSelected.note,
         },
         onSubmit:   () => {
             console.log(formik.getFieldProps('task').value)
@@ -53,7 +54,7 @@ const FormDialogEdit = (props) => {
     return (
         <div>
             <Dialog open={props.openEdit} onClose={props.handleCloseEdit}>
-                <DialogTitle>Edit task</DialogTitle>
+                <DialogTitle>Edit project</DialogTitle>
                 <FormikProvider value={formik}>
                     <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
                         <DialogContent>
@@ -84,7 +85,6 @@ const FormDialogEdit = (props) => {
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={status}
-                                        defaultValue={props.taskEditSelected.status}
                                         label="Status"
                                         onChange={handleChange}
                                     >
@@ -93,6 +93,17 @@ const FormDialogEdit = (props) => {
                                         <MenuItem value={"finished"}>Terminée</MenuItem>
                                     </Select>
                                 </FormControl>
+                                <TextField
+                                    fullWidth
+                                    type={'text'}
+                                    maxLength={90}
+                                    InputLabelProps={{ shrink: true }}
+                                    defaultValue={props.taskEditSelected.note}
+                                    label="Note de suivi"
+                                    {...getFieldProps('note')}
+                                    error={Boolean(touched.note && errors.note)}
+                                    helperText={touched.note && errors.note}
+                                />
                             </Stack>
                         </DialogContent>
                         <DialogActions>

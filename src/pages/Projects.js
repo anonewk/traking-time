@@ -92,11 +92,12 @@ moment.locale('fr', {
 // ----------------------------------------------------------------------
 const labelTimeSpent = `Temp passé en ${  moment(new Date()).format('MMM').toString()} (Heure)`;
 const TABLE_HEAD = [
-  { id: 'name', label: 'Task', alignRight: false },
+  { id: 'name', label: 'Project', alignRight: false },
   { id: 'company', label: labelTimeSpent, alignRight: false },
   { id: 'role', label: 'Date de création', alignRight: false },
   { id: 'isVerified', label: 'Date de mise à jour', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
+  { id: 'note', label: 'Note', alignRight: false },
   { id: '' },
 ];
 console.log(moment(new Date()).format('MMM'))
@@ -131,7 +132,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function Tasks(props) {
+export default function Projects(props) {
   const dispatch = useDispatch()
   const tasksReducer = useSelector(state => state.tasksReducer);
 
@@ -228,10 +229,10 @@ export default function Tasks(props) {
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
-              Tasks
+              Projects
             </Typography>
             <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-              New task
+              New project
             </Button>
           </Stack>
 
@@ -252,7 +253,7 @@ export default function Tasks(props) {
                   />
                   <TableBody>
                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { id, task, timeSpent, createdAt, updatedAt, status } = row;
+                      const { id, task, timeSpent, createdAt, updatedAt, status, note } = row;
                       const isItemSelected = selected.indexOf(task) !== -1;
 
                       return (
@@ -283,6 +284,7 @@ export default function Tasks(props) {
                                 {sentenceCase(status ?? '')}
                               </Label>
                             </TableCell>
+                            <TableCell align="left">{note ?? ''}</TableCell>
 
                             <TableCell align="right">
                               <UserMoreMenu

@@ -39,6 +39,7 @@ const FormDialog = (props) => {
             createdAt: new Date(),
             updatedAt: '',
             status: '',
+            note: '',
         },
         validationSchema: TaskSchema,
         onSubmit:  () => {
@@ -54,7 +55,7 @@ const FormDialog = (props) => {
     return (
         <div>
             <Dialog open={props.open} onClose={props.handleClose}>
-                <DialogTitle>Task</DialogTitle>
+                <DialogTitle>Project</DialogTitle>
                 <FormikProvider value={formik}>
                     <Form autoComplete="off" noValidate onReset={handleReset} onSubmit={handleSubmit}>
                         <DialogContent>
@@ -91,6 +92,15 @@ const FormDialog = (props) => {
                                         <MenuItem value={"finished"}>Terminée</MenuItem>
                                     </Select>
                                 </FormControl>
+                                <TextField
+                                    fullWidth
+                                    InputLabelProps={{ shrink: true }}
+                                    type={'text'}
+                                    label="Note de suivi"
+                                    {...getFieldProps('note')}
+                                    error={Boolean(touched.note && errors.note)}
+                                    helperText={touched.note && errors.note}
+                                />
                             </Stack>
                         </DialogContent>
                         <DialogActions>

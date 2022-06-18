@@ -9,7 +9,7 @@ import NotFound from './pages/Page404';
 import Register from './pages/Register';
 import Products from './pages/Products';
 import DashboardApp from './pages/DashboardApp';
-import Tasks from "./pages/Tasks";
+import Projects from "./pages/Projects";
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ export default function Router(props) {
       element: <DashboardLayout user={props.authReducer}/>,
       children: [
         { path: 'app', element: <DashboardApp /> },
-        { path: 'tasks', element: <Tasks applicationReducer={props.applicationReducer}/> },
+        { path: 'projects', element: <Projects applicationReducer={props.applicationReducer}/> },
         { path: 'products', element: <Products applicationReducer={props.applicationReducer}/> },
         { path: 'blog', element: <Calendar applicationReducer={props.applicationReducer} authReducer={props.authReducer}/> },
       ],

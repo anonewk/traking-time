@@ -9,10 +9,12 @@ export const CreateTask = data => {
         status: data.status,
         createdAt: data.formik.getFieldProps('createdAt').value,
         updatedAt: data.formik.getFieldProps('updatedAt').value,
+        note: data.formik.getFieldProps('note').value,
     }))
     return true;
 }
 export const UpdateTask = data => {
+
     data.dispatch(UpdateTaskAction({
         id: data.taskEditSelected.id,
         task: data.formik.getFieldProps('task').value ?? data.taskEditSelected.task,
@@ -20,6 +22,7 @@ export const UpdateTask = data => {
         createdAt:  data.taskEditSelected.createdAt,
         status: data.status ?? data.taskEditSelected.status,
         updatedAt: new Date(),
+        note: data.formik.getFieldProps('note').value ?? data.taskEditSelected.note,
     }))
     return true;
 }

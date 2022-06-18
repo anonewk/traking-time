@@ -13,86 +13,61 @@ import {
 } from "@mui/material";
 import { useFormik, Form, FormikProvider } from 'formik';
 import {LoadingButton} from "@mui/lab";
-import {faker} from "@faker-js/faker";
-import * as Yup from "yup";
-import ColorList from "react-color-list"
 import {useState} from "react";
 import {hideLoader, showError, showLoader} from "../store/actions/application.action";
-import groupLabel from "../_mock/groupLabel";
+import {ERROR, UPDATE_EVENT_SUCCESS} from "../constants/Constants";
 import HandleChange from "../hooks/handleChange";
-import {CreateEvent} from "../services/EventsService";
-import {CREATE_EVENT_SUCCESS, ERROR} from "../constants/Constants";
+import groupLabel from "../_mock/groupLabel";
+import {UpdateEvent} from "../services/EventsService";
 
 
-const FormDialogCalendar = (props) => {
+
+const FormDialogEditCalendar = (props) => {
+    const [selectedDelEdit, setSelectedDelEdit] = useState(false)
     const [colors, setColors] = useState(["#f28f6a"])
-    const [groupLabelData, setGroupLabelData] = useState('');
+    const [groupLabelData, setGroupLabelData] = useState(props.eventEditSelected.groupLabel);
 
-
-    const TaskSchema = Yup.object().shape({
-        task: Yup.string("label").required('Champs requis'),
-    });
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            id: faker.datatype.uuid(),
-            label: '',
-            groupLabel: '',
-            user: props.user !== null && props.user.email.split("@")[0],
+            id: props.eventEditSelected.id,
+            label: props.eventEditSelected.label,
+            groupLabel: props.eventEditSelected.groupLabel,
+            user: props.eventEditSelected.user,
             color: colors,
-            startHour: '',
-            endHour: '',
-            date: '',
-            createdAt: new Date(),
+            startHour: props.eventEditSelected.startHour.split(' ')[0],
+            endHour: props.eventEditSelected.endHour.split(' ')[0],
+            date: props.eventEditSelected.date,
+            createdAt: props.eventEditSelected.createdAt,
             createdBy: props.user !== null && props.user.email.split("@")[0]
         },
-        validationSchema: TaskSchema,
-        onSubmit:  () => {},
+        onSubmit:   () => {
+            // props.dispatch(showLoader())
+            const updateEvent = UpdateEvent({
+                formik,
+                dispatch: props.dispatch,
+                groupLabelData,
+                eventEditSelected: props.eventEditSelected,
+                user: props.user
+            });
+            props.dispatch(hideLoader())
+            props.handleCloseEdit()
+            return !updateEvent ? props.dispatch(showError(ERROR)) : props.dispatch(showError(UPDATE_EVENT_SUCCESS))
+        },
     });
-    const { errors, touched, handleReset, getFieldProps } = formik;
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        props.dispatch(showLoader())
-        const startHour = formik.getFieldProps('startHour').value.split(':')[0] > 12
-            ?
-            `${formik.getFieldProps('startHour').value  } PM`
-            :
-            `${formik.getFieldProps('startHour').value  } AM`;
-        const endHour = formik.getFieldProps('endHour').value.split(':')[0] > 12
-            ?
-            `${formik.getFieldProps('endHour').value  } PM`
-            :
-            `${formik.getFieldProps('endHour').value  } AM`;
-        const initialValues =  {
-            id: faker.datatype.uuid(),
-            label: formik.getFieldProps('label').value,
-            groupLabel: groupLabelData,
-            user: props.user !== null && props.user.email.split("@")[0],
-            color: colors,
-            startHour,
-            endHour,
-            date: formik.getFieldProps('date').value,
-            createdAt: new Date(),
-            createdBy: props.user !== null && props.user.email.split("@")[0]
-        }
-        console.log(initialValues)
-        const createEvent = CreateEvent({initialValues, dispatch: props.dispatch})
-        props.setReload(!props.reload)
-        props.handleClose()
-        props.dispatch(hideLoader())
-        return !createEvent ? props.dispatch(showError(ERROR)) : props.dispatch(showError(CREATE_EVENT_SUCCESS))
-    }
 
-    return (
-        <div>
-            <Dialog open={props.open} onClose={props.handleClose}>
-                <DialogTitle>Event</DialogTitle>
+    const { errors, touched, handleSubmit, getFieldProps } = formik;
+    const getComponent = () => {
+        if (selectedDelEdit === 'EDIT') {
+            return (
                 <FormikProvider value={formik}>
-                    <Form autoComplete="off" noValidate onReset={handleReset} onSubmit={(e) => handleSubmit(e)}>
+                    <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
                         <DialogContent>
                             <Stack spacing={3}>
                                 <TextField
                                     fullWidth
                                     type="text"
+                                    value={props.eventEditSelected.label}
                                     label="Label"
                                     {...getFieldProps('label')}
                                     error={Boolean(touched.label && errors.label)}
@@ -103,8 +78,8 @@ const FormDialogCalendar = (props) => {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={groupLabelData}
-                                        label="Status"
+                                        value={props.eventEditSelected.groupLabel}
+                                        label="Group label"
                                         onChange={(e) => HandleChange({setState: setGroupLabelData, event: e})}
                                     >
                                         {
@@ -114,13 +89,12 @@ const FormDialogCalendar = (props) => {
                                         }
                                     </Select>
                                 </FormControl>
-
                                 <TextField
                                     fullWidth
-                                    InputLabelProps={{ shrink: true }}
+                                    InputLabelProps={{shrink: true}}
                                     type={'time'}
                                     label="Heure de départ"
-                                    onChange={(e) => console.log(e)}
+                                    value={props.eventEditSelected.startHour.split(' ')[0]}
                                     {...getFieldProps('startHour')}
                                     error={Boolean(touched.startHour && errors.startHour)}
                                     helperText={touched.startHour && errors.startHour}
@@ -128,7 +102,8 @@ const FormDialogCalendar = (props) => {
                                 <TextField
                                     fullWidth
                                     type={'time'}
-                                    InputLabelProps={{ shrink: true }}
+                                    InputLabelProps={{shrink: true}}
+                                    value={props.eventEditSelected.endHour.split(' ')[0]}
                                     label="Heure de fin"
                                     {...getFieldProps('endHour')}
                                     error={Boolean(touched.endHour && errors.endHour)}
@@ -137,27 +112,50 @@ const FormDialogCalendar = (props) => {
                                 <TextField
                                     fullWidth
                                     type={'date'}
-                                    InputLabelProps={{ shrink: true }}
+                                    InputLabelProps={{shrink: true}}
+                                    value={props.eventEditSelected.date}
                                     label="Date"
                                     {...getFieldProps('date')}
                                     error={Boolean(touched.date && errors.date)}
                                     helperText={touched.date && errors.date}
                                 />
-
-
                             </Stack>
                         </DialogContent>
+
                         <DialogActions>
-                            <Button onClick={props.handleClose}>Annuler</Button>
-                            <LoadingButton  size="large" type="submit" variant="contained" loading={props.applicationReducer.loading}>
-                                Ajouter
+                            <Button onClick={() => setSelectedDelEdit(false)}>Annuler</Button>
+                            <LoadingButton size="large" type="submit" variant="contained"
+                                           loading={props.applicationReducer.loading}>
+                                Modifier
                             </LoadingButton>
                         </DialogActions>
                     </Form>
                 </FormikProvider>
+            )
+        }
+            return (
+                <DialogActions>
+                   <Button onClick={() => props.handleDelete({id: props.eventEditSelected.id})}>Supprimer</Button>
+                    {
+                        selectedDelEdit === 'EDIT' ?
+                            <LoadingButton size="large" type="submit" variant="contained"
+                                           loading={props.applicationReducer.loading}>
+                                Modifier
+                            </LoadingButton>
+                            :
+                            <Button onClick={() => setSelectedDelEdit('EDIT')}>Modifier</Button>
 
+                    }
+                </DialogActions>
+            )
+    }
+     return (
+        <div>
+            <Dialog open={props.openEdit} onClose={props.handleCloseEdit}>
+                <DialogTitle>Que voulez-vous faire ?</DialogTitle>
+                {getComponent()}
             </Dialog>
         </div>
     );
 }
-export default FormDialogCalendar;
+export default FormDialogEditCalendar;

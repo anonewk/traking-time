@@ -12,8 +12,8 @@ const navConfig = [
     icon: getIcon('eva:pie-chart-2-fill'),
   },
   {
-    title: 'Tasks',
-    path: '/dashboard/tasks',
+    title: 'Projects',
+    path: '/dashboard/projects',
     icon: getIcon('carbon:task'),
   },
   {

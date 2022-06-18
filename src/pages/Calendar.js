@@ -9,11 +9,20 @@ import {useDispatch, useSelector} from "react-redux";
 import Page from '../components/Page';
 import Iconify from "../components/Iconify";
 import FormDialogCalendar from "../components/FormDialogCalendar";
+import FormDialogEditCalendar from "../components/FormDialogEditCalendar";
+import {UserMoreMenu} from "../sections/@dashboard/user";
+import {DeleteEvent} from "../services/EventsService";
+import {showError} from "../store/actions/application.action";
+import {DELETE_EVENT_SUCCESS, ERROR} from "../constants/Constants";
 // ----------------------------------------------------------------------
 export default function Calendar(props) {
     const dispatch = useDispatch()
     const eventsReducer = useSelector(state => state.eventsReducer);
 
+    const [reload, setReload] = useState(false);
+    useEffect(() => {
+        setReload(reload)
+    }, [reload])
 
     const [state, setState] = useState({
         options: {
@@ -26,7 +35,7 @@ export default function Calendar(props) {
             maxHeight: 540
         },
         alertProps: {
-            open: true,
+            open: false,
             color: "info",          // info | success | warning | error
             severity: "info",       // info | success | warning | error
             message: "🚀 Let's start with awesome react-mui-scheduler 🔥 🔥 🔥" ,
@@ -40,66 +49,36 @@ export default function Calendar(props) {
             showDatePicker: true
         }
     })
+    useEffect(() => {
+        setState(state)
+    }, [state, reload])
+
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
-    const [eventEditSelected, setEventEditSelected] = useState({});
+    const [eventEditSelected, setEventEditSelected] = useState({
+        id: '',
+        label: '',
+        groupLabel: '',
+        user: '',
+        color: '',
+        startHour: '',
+        endHour: '',
+        date: '',
+        createdAt: '',
+        createdBy: ''
+    });
     useEffect(() => {
         setEventEditSelected(eventEditSelected)
-    }, [eventEditSelected])
-    const events = [
-        {
-            id: "event-1",
-            label: "Medical consultation",
-            groupLabel: "Dr Shaun Murphy",
-            user: "Dr Shaun Murphy",
-            color: "#f28f6a",
-            startHour: "04:00 AM",
-            endHour: "05:00 AM",
-            date: "2022-06-14",
-            createdAt: new Date(),
-            createdBy: "Kristina Mayer"
-        },
-        {
-            id: "event-2",
-            label: "Medical consultation",
-            groupLabel: "Dr Claire Brown",
-            user: "Dr Claire Brown",
-            color: "#099ce5",
-            startHour: "09:00 AM",
-            endHour: "10:00 AM",
-            date: "2022-05-09",
-            createdAt: new Date(),
-            createdBy: "Kristina Mayer"
-        },
-        {
-            id: "event-3",
-            label: "Medical consultation",
-            groupLabel: "Dr Menlendez Hary",
-            user: "Dr Menlendez Hary",
-            color: "#263686",
-            startHour: "13 PM",
-            endHour: "14 PM",
-            date: "2022-05-10",
-            createdAt: new Date(),
-            createdBy: "Kristina Mayer"
-        },
-        {
-            id: "event-4",
-            label: "Consultation prénatale",
-            groupLabel: "Dr Shaun Murphy",
-            user: "Dr Shaun Murphy",
-            color: "#f28f6a",
-            startHour: "08:00 AM",
-            endHour: "09:00 AM",
-            date: "2022-05-11",
-            createdAt: new Date(),
-            createdBy: "Kristina Mayer"
-        }
-    ]
+    }, [openEdit, eventEditSelected])
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    const [events, setEvents] = useState(useSelector(state => state.eventsReducer));
+    useEffect(() => {
+        setEvents(eventsReducer);
+        console.log('ee', eventsReducer)
+        console.log('events, events', events)
+    }, [reload, events, eventsReducer, state]);
+
+
     const handleClickOpenEdit = () => {
         setOpenEdit(true);
     };
@@ -111,24 +90,62 @@ export default function Calendar(props) {
         setOpenEdit(false);
         /* setTaskEditSelected({}) */
     };
+    const handleDelete = (data) => {
+        const delEvent = DeleteEvent({id: data.id, dispatch})
+        const stateNNew = {
+            options: {
+                transitionMode: "zoom", // or fade
+                startWeekOn: "mon",     // or sun
+                defaultMode: "month",    // or week | day | timeline
+                minWidth: 540,
+                maxWidth: 540,
+                minHeight: 540,
+                maxHeight: 540
+            },
+            alertProps: {
+                open: true,
+                color: "info",          // info | success | warning | error
+                severity: "info",       // info | success | warning | error
+                message: "Deleted success" ,
+                showActionButton: true,
+                showNotification: true,
+                delay: 1500
+            },
+            toolbarProps: {
+                showSearchBar: true,
+                showSwitchModeButtons: true,
+                showDatePicker: true
+            }
+        }
+        setState(stateNNew)
+        console.log('s', state)
+        setReload(!reload)
+        setOpenEdit(false);
+
+    };
+    console.log('xx', state)
+
     const handleSendDataModal = (data) => {
         setEventEditSelected(data)
         handleClickOpenEdit()
     };
     const handleCellClick = (event, row, day) => {
         // Do something...
+
     }
 
     const handleEventClick = (event, item) => {
-        // Do something...
+        handleSendDataModal(item)
     }
 
     const handleEventsChange = (item) => {
+        console.log('item handleEventsChange', item)
         // Do something...
     }
 
     const handleAlertCloseButtonClicked = (item) => {
         // Do something...
+
     }
     return (
         <Page title="Dashboard: Calendar">
@@ -143,7 +160,7 @@ export default function Calendar(props) {
                 </Stack>
                 <Scheduler
                     locale="fr"
-                    events={eventsReducer}
+                    events={events}
                     legacyStyle={false}
                     options={state?.options}
                     alertProps={state?.alertProps}
@@ -153,12 +170,25 @@ export default function Calendar(props) {
                     onTaskClick={handleEventClick}
                     onAlertCloseButtonClicked={handleAlertCloseButtonClicked}
                 />
+
             </Container>
             <FormDialogCalendar
                 user={props.authReducer.user}
                 open={open}
                 setOpen={setOpen}
+                reload={reload}
+                setReload={setReload}
                 handleClose={handleClose}
+                dispatch={dispatch}
+                applicationReducer={props.applicationReducer}
+            />
+            <FormDialogEditCalendar
+                user={props.authReducer.user}
+                openEdit={openEdit}
+                eventEditSelected={eventEditSelected}
+                setOpenEdit={setOpenEdit}
+                handleCloseEdit={handleCloseEdit}
+                handleDelete={handleDelete}
                 dispatch={dispatch}
                 applicationReducer={props.applicationReducer}
             />
